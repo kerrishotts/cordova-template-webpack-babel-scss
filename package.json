@@ -1,0 +1,36 @@
+{
+  "name": "cordova-template-webpack-ts-scss",
+  "version": "0.2.2",
+  "description": "Cordova basic template using webpack, typescript, and scss",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kerrishotts/cordova-template-webpack-ts-scss.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "ecosystem:phonegap",
+    "cordova:template",
+    "cordova",
+    "webpack",
+    "typescript",
+    "scss",
+    "sass",
+    "ts",
+    "bundler",
+    "es2015",
+    "es2016",
+    "es2017",
+    "phonegap",
+    "phonegap:template"
+  ],
+  "author": "Kerri Shotts",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/kerrishotts/cordova-template-webpack-ts-scss/issues"
+  },
+  "homepage": "https://github.com/kerrishotts/cordova-template-webpack-ts-scss#readme"
+}
