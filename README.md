@@ -1,6 +1,6 @@
-# cordova-template-webpack-ts-scss
+# cordova-template-webpack-babel-scss
 
-This template is designed to make it easy for you to write ES2015+, TypeScript, and SCSS code, and then bundle that code using webpack v2. It will do this automatically each time you run any Cordova/PhoneGap command that triggers the `prepare` phase.
+This template is designed to make it easy for you to write ES2015+ and SCSS code, and then bundle that code using webpack v2. It will do this automatically each time you run any Cordova/PhoneGap command that triggers the `prepare` phase.
 
 This template is based on the [cordova-plugin-webpack-transpiler](https://github.com/kerrishotts/cordova-plugin-webpack-transpiler) plugin which is very similar and slightly more flexible. However, if you don't want to rely on a plugin, this template will work as well.
 
@@ -15,7 +15,7 @@ This template is based on the [cordova-plugin-webpack-transpiler](https://github
 You can create a project using this template as follows:
 
 ```bash
-$ cordova create hello com.example.hello hello --template cordova-template-webpack-ts-scss
+$ cordova create hello com.example.hello hello --template cordova-template-webpack-babel-scss
 ```
 
 Once the project has been created, you'll need to add a platform, like so:
@@ -31,7 +31,7 @@ The act of adding a platform will automatically trigger the first `prepare`, and
 
 This template uses an "external" structure for all transformed assets. This means there will be two directories that contain code:
 
-* `www.src` &mdash; this is where your ES2015+, TypeScript, SCSS files, and all other assets live
+* `www.src` &mdash; this is where your ES2015+, SCSS files, and all other assets live
 * `www` &mdash; after `prepare` this will store copied assets and transformed files; **you should not make changes to this directory**
 
 Within `www.src`, the following structure is assumed:
@@ -42,8 +42,6 @@ www.src/
     js/                                 # JavaScript files that don't need transpilation
     es/                                 # ES2015+ files
         index.js                        # ... App's javascript entry point
-    ts/                                 # TypeScript files; if present overrides es/
-        index.ts                        # ... App's typescript entry point; if present overrides es/index.js
     css/                                # CSS stylesheets that don't need transformed
     scss/                               # SCSS stylesheets
         styles.css                      # ... Primary styles; other styles need to be imported
@@ -54,7 +52,7 @@ www.src/
 
 ```
 
-> **Note**: You can change to a "sibling" structure if you desire by removing the `www.src` directory and moving `es`, `ts`, and `scss` to the `www` directory.
+> **Note**: You can change to a "sibling" structure if you desire by removing the `www.src` directory and moving `es`, and `scss` to the `www` directory.
 
 ### Transformations
 
@@ -62,13 +60,11 @@ The following transformations occur just prior to the `prepare` phase.
 
 Sibling     |      Entry Point           | Output
 -----------:|:---------------------------|:------------------
-TypeScript  | `www/ts/index.ts`          | `www/js/bundle.js`
 ES2015      | `www/es/index.js`          | `www/js/bundle.js`
 SCSS        | `www/scss/styles.scss`     | `www/css/bundle.css`
 
 External    |      Entry Point           | Output
 -----------:|:---------------------------|:------------------
-TypeScript  | `www.src/ts/index.ts`      | `www/js/bundle.js`
 ES2015      | `www.src/es/index.js`      | `www/js/bundle.js`
 SCSS        | `www.src/scss/styles.scss` | `www/css/bundle.css`
 HTML        | `www.src/*.html`           | `www/*.html`
@@ -84,8 +80,7 @@ The `before prepare` hook will transpile your code (and copy files when using th
 Starting webpack bundling and transpilation phase...
 (node:46414) DeprecationWarning: loaderUtils.parseQuery() received a non-string value which can be problematic, see https://github.com/webpack/loader-utils/issues/56
 parseQuery() will be replaced with getOptions() in the next major version of loader-utils.
-ts-loader: Using typescript@2.2.1 and /.../example-ts-ext/tsconfig.json
-... webpack bundling and typescript transpilation phase complete!
+... webpack bundling and babel transpilation phase complete!
 Hash: 76ef6d9645fc284a7a9c
 Version: webpack 2.2.1
 Time: 1977ms
@@ -96,7 +91,7 @@ css/bundle.css  14.8 kB       0  [emitted]  main
   img/logo.png  21.8 kB          [emitted]
 ```
 
-The output indicates that four assets were generated. (The paths are relative to your `www` folder.) The `bundle.*` files are transformed from your ES2015+/TypeScript or SCSS files. The other files are files that were copied (this example was from an project using the external structure).
+The output indicates that four assets were generated. (The paths are relative to your `www` folder.) The `bundle.*` files are transformed from your ES2015+ or SCSS files. The other files are files that were copied (this example was from an project using the external structure).
 
 > **Note**: If you are using the sibling project structure, an `after prepare` step will execute. This step removes duplicate files in the resulting platform build artifacts so that your original source files aren't needlessly copied to your app bundles.
 
@@ -113,7 +108,7 @@ If you need to change this behavior, you can override it by copying `webpack.con
 
 ### Modifying the configuration files
 
-If you wish to modify `webpack.common.js`, `webpack.config.js`, `webpack.release.config.js`, or `tsconfig.json`, you can. The plugin will not attempt to override their contents, and it won't attempt to overwrite the files on a reinstall. If you need to reset these configuration files, delete them and reinstall the plugin.
+If you wish to modify `webpack.common.js`, `webpack.config.js`, `webpack.release.config.js`, or `.babelrc`, you can. The plugin will not attempt to override their contents, and it won't attempt to overwrite the files on a reinstall. If you need to reset these configuration files, delete them and reinstall the plugin.
 
 > **Note**: You should prefer to override settings used by `webpack.common.js` in `webpack.config.js`.
 
@@ -152,8 +147,8 @@ html/**/*
 The default configurations add the following module resolution paths (relative to project root):
 
 ```
-(www|src.www)/(es|ts)/lib
-(www|src.www)/(es|ts)/vendor
+(www|src.www)/es/lib
+(www|src.www)/es/vendor
 (www|src.www)/lib
 (www|src.www)/vendor
 node_modules
@@ -169,14 +164,14 @@ Alias            | Path
 `Lib`            | `(www|src.www)/lib`
 `$VENDOR`        | `(www|src.www)/vendor`
 `Vendor`         | `(www|src.www)/vendor`
-`Components`     | `(www|src.www)/(es|ts)/components`
-`Controllers`    | `(www|src.www)/(es|ts)/controllers`
-`Models`         | `(www|src.www)/(es|ts)/models`
-`Pages`          | `(www|src.www)/(es|ts)/pages`
-`Routes`         | `(www|src.www)/(es|ts)/routes`
-`Templates`      | `(www|src.www)/(es|ts)/templates`
-`Utilities`      | `(www|src.www)/(es|ts)/utilities`
-`Views`          | `(www|src.www)/(es|ts)/views`
+`Components`     | `(www|src.www)/es/components`
+`Controllers`    | `(www|src.www)/es/controllers`
+`Models`         | `(www|src.www)/es/models`
+`Pages`          | `(www|src.www)/es/pages`
+`Routes`         | `(www|src.www)/es/routes`
+`Templates`      | `(www|src.www)/es/templates`
+`Utilities`      | `(www|src.www)/es/utilities`
+`Views`          | `(www|src.www)/es/views`
 
 # Overriding the configuration
 
@@ -242,9 +237,9 @@ The following are exported by `webpack.common.js`:
             vendor: {to:}
         }
         ```
-    * `outputFile` (optional): Specifies the output filename for the JavaScript bundle. Defaults to `indexes.es.to + "bundle.js"` (or `bundle.ts` if using TypeScript).
+    * `outputFile` (optional): Specifies the output filename for the JavaScript bundle. Defaults to `indexes.es.to + "bundle.js"`
     * `vendor` (required): Modules to output as part of the `vendor` chunk. If none, pass `[]`.
-    * `entryFiles` (optional): Specifies the entry files for the app. If not provided, defaults to (substituting `ts` if using TypeScript):
+    * `entryFiles` (optional): Specifies the entry files for the app. If not provided, defaults to:
         ```js
         {
             app: ["./" + indexes.es.from, "./" + indexes.scss.from],
