@@ -1,14 +1,14 @@
 {
-  "name": "cordova-template-webpack-ts-scss",
+  "name": "cordova-template-webpack-babel-scss",
   "version": "0.2.2",
-  "description": "Cordova basic template using webpack, typescript, and scss",
+  "description": "Cordova basic template using webpack, babel, and scss",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kerrishotts/cordova-template-webpack-ts-scss.git"
+    "url": "git+https://github.com/kerrishotts/cordova-template-webpack-babel-scss.git"
   },
   "keywords": [
     "ecosystem:cordova",
@@ -16,10 +16,9 @@
     "cordova:template",
     "cordova",
     "webpack",
-    "typescript",
+    "babel",
     "scss",
     "sass",
-    "ts",
     "bundler",
     "es2015",
     "es2016",
@@ -30,7 +29,7 @@
   "author": "Kerri Shotts",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/kerrishotts/cordova-template-webpack-ts-scss/issues"
+    "url": "https://github.com/kerrishotts/cordova-template-webpack-babel-scss/issues"
   },
-  "homepage": "https://github.com/kerrishotts/cordova-template-webpack-ts-scss#readme"
+  "homepage": "https://github.com/kerrishotts/cordova-template-webpack-babel-scss#readme"
 }
