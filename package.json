@@ -1,6 +1,6 @@
 {
   "name": "cordova-template-webpack-babel-scss",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "Cordova basic template using webpack, babel, and scss",
   "main": "index.js",
   "scripts": {

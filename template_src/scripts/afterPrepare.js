@@ -9,6 +9,10 @@ module.exports = function(ctx) {
 
     var filesToDelete;
 
+    if (ctx.cmdLine.toLowerCase().indexOf("--notransform") > -1) {
+        return;
+    }
+
     // only delete duplicated platform files if we're in SIBLING mode
     if (ctx.opts.projectRoot && common.detectOperatingmode(ctx) === common.OPMODE.SIBLING) {
         events.emit("info", "Removing bundle artifacts from prepared platforms...");

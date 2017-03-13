@@ -23,6 +23,12 @@ var path = require("path"),
     ExtractTextPlugin = require("extract-text-webpack-plugin"),
     CopyWebpackPlugin = require("copy-webpack-plugin");
 
+var extensions = [".js", ".ts", ".jsx", ".es", // typical JS extensions
+                  ".jsm", ".esm",               // jsm is node's ES6 module ext
+                  ".json",                      // some modules require json without an extension
+                  ".css", ".scss",              // CSS & SASS extensions
+                  "*"];                         // allow extensions on imports
+
 var dirs = {
     css:      "css",
     es:       "es",
@@ -54,7 +60,7 @@ var dirs = {
  * For full information, see https://github.com/kevlened/copy-webpack-plugin
  ******************************************************************************/
 var assetsToCopyIfExternal = [
-    { from: "*.html" },
+    { from: "*.*" },
     { from: dirs.img + "/**/*" },
     { from: dirs.css + "/**/*" },
     { from: dirs.js + "/**/*" },
@@ -75,12 +81,15 @@ var vendor = [];
 
 function config(options) {
     var src = options.src,
+        assetsToCopyIfExternal = options.assetsToCopyIfExternal,
+        assetsToCopyIfSibling = options.assetsToCopyIfSibling,
         sourcePaths = options.sourcePaths,
         entryFiles = options.entryFiles,
         outputFile = options.outputFile,
         outputPaths = options.outputPaths,
         indexes = options.indexes,
         dirs = options.dirs,
+        extensions = options.extensions,
         vendor = options.vendor,
         allowTypeScript = options.allowTypeScript || false,
         allowScss = options.allowScss | false,
@@ -166,10 +175,12 @@ function config(options) {
             path: outputPaths.www,
         },
         resolve: {
-            extensions: [".js", ".ts", ".jsx", ".es", // typical JS extensions
-                        ".jsm", ".esm",              // jsm is node's ES6 module ext
-                        ".css", ".scss",             // CSS & SASS extensions
-                        "*"],                        // allow extensions on imports
+            extensions: extensions ||
+                       [".js", ".ts", ".jsx", ".es", // typical JS extensions
+                        ".jsm", ".esm",               // jsm is node's ES6 module ext
+                        ".json",                      // some modules require json without an extension
+                        ".css", ".scss",              // CSS & SASS extensions
+                        "*"],                         // allow extensions on imports
             modules: [
                 path.resolve(sourcePaths.src, dirs.es, "lib"),
                 path.resolve(sourcePaths.src, dirs.es, "vendor"),
@@ -199,7 +210,7 @@ function config(options) {
         module: {
             rules: [
                 { test: /\.(html|txt)$/, use: "raw-loader" },
-                { test: /\.(png|jpg|svg)$/, use: ["file-loader"]},
+                { test: /\.(png|jpg|svg|gif)$/, use: ["file-loader"]},
                 { test: /\.(json|json5)$/, use: "json5-loader" },
                 {
                     test: /\.scss$/,
@@ -239,6 +250,7 @@ function config(options) {
 module.exports = {
     defaults: {
         dirs: dirs,
+        extensions: extensions,
         assetsToCopyIfExternal: assetsToCopyIfExternal,
         assetsToCopyIfSibling: assetsToCopyIfSibling,
         vendor: vendor,

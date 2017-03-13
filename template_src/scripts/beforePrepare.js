@@ -18,6 +18,10 @@ module.exports = function(ctx) {
         Q = ctx.requireCordovaModule("q"),
         events = ctx.requireCordovaModule("cordova-common").events;
 
+    if (ctx.cmdLine.toLowerCase().indexOf("--notransform") > -1) {
+        return;
+    }
+
     events.emit("info", "Running npm install...");
     common.installRequiredDependencies(ctx);
 
