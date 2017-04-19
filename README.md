@@ -1,8 +1,6 @@
-# cordova-template-webpack-babel-scss
+# cordova-template-webpack-babel-scss 0.3.1
 
 This template is designed to make it easy for you to write ES2015+ and SCSS code, and then bundle that code using webpack v2. It will do this automatically each time you run any Cordova/PhoneGap command that triggers the `prepare` phase.
-
-This template is based on the [cordova-plugin-webpack-transpiler](https://github.com/kerrishotts/cordova-plugin-webpack-transpiler) plugin which is very similar and slightly more flexible. However, if you don't want to rely on a plugin, this template will work as well.
 
 ## Requirements
 
@@ -52,18 +50,11 @@ www.src/
 
 ```
 
-> **Note**: You can change to a "sibling" structure if you desire by removing the `www.src` directory and moving `es`, and `scss` to the `www` directory.
-
 ### Transformations
 
 The following transformations occur just prior to the `prepare` phase.
 
-Sibling     |      Entry Point           | Output
------------:|:---------------------------|:------------------
-ES2015      | `www/es/index.js`          | `www/js/bundle.js`
-SCSS        | `www/scss/styles.scss`     | `www/css/bundle.css`
-
-External    |      Entry Point           | Output
+Type        |      Entry Point           | Output
 -----------:|:---------------------------|:------------------
 ES2015      | `www.src/es/index.js`      | `www/js/bundle.js`
 SCSS        | `www.src/scss/styles.scss` | `www/css/bundle.css`
@@ -93,10 +84,6 @@ css/bundle.css  14.8 kB       0  [emitted]  main
 
 The output indicates that four assets were generated. (The paths are relative to your `www` folder.) The `bundle.*` files are transformed from your ES2015+ or SCSS files. The other files are files that were copied (this example was from an project using the external structure).
 
-> **Note**: If you are using the sibling project structure, an `after prepare` step will execute. This step removes duplicate files in the resulting platform build artifacts so that your original source files aren't needlessly copied to your app bundles.
-
-> **Note**: If you've copied in your own `index.html` file, you'll need to update your `index.html` file to reference `js/bundle.js` and `css/bundle.css` instead of your original entry files.
-
 ### Debug vs Release
 
 The plugin watches for a `--release` switch on the command line; if it is detected the following occurs:
@@ -104,13 +91,11 @@ The plugin watches for a `--release` switch on the command line; if it is detect
 * Minification is turned on
 * Sourcemaps are turned off
 
-If you need to change this behavior, you can override it by copying `webpack.config.js` in your project root to `webpack.release.config.js` and making the desired changes.
+If you need to change this behavior, you can override it by copying `webpack.config.js` in your project root to `webpack.release.config.js` and making the desired changes, or by requiring `webpack.config.js` and making any necessary tweaks.
 
 ### Modifying the configuration files
 
-If you wish to modify `webpack.common.js`, `webpack.config.js`, `webpack.release.config.js`, or `.babelrc`, you can. The plugin will not attempt to override their contents, and it won't attempt to overwrite the files on a reinstall. If you need to reset these configuration files, delete them and reinstall the plugin.
-
-> **Note**: You should prefer to override settings used by `webpack.common.js` in `webpack.config.js`.
+If you wish to modify `webpack.config.js`, `webpack.release.config.js`, or `.babelrc`, you can. The plugin will not attempt to override their contents, and it won't attempt to overwrite the files on a reinstall. If you need to reset these configuration files, delete them and reinstall the plugin.
 
 # Built-in Webpack Loaders
 
@@ -121,6 +106,8 @@ file pattern        | loader       | example
 *.json; *.json5     | json5-loader | `import pkg from "../../package.json";`
 *.html; *.txt       | raw-loader   | `import template from "../templates/list-item.html";`
 *.png; *.jpg; *.svg | file-loader  | `import icon from "../img/icon.svg";`
+*.eot; *.ttf; *.woff; *.woff2 | file-loader  | `import icon from "../img/icon.svg";`
+&mdash;                       | imports-loader |  None; you must specify the rules yourself
 
 If a file pattern you need to import isn't matched with a loader, you can specify the loader directly:
 
@@ -130,7 +117,7 @@ import xml from "raw-loader!../../config.xml";
 
 # Built-in asset copying
 
-When in the "external" operating mode, the following assets will be copied from `www.src` to `www`:
+The following assets will be copied from `www.src` to `www`:
 
 ```
 *.html
@@ -147,10 +134,10 @@ html/**/*
 The default configurations add the following module resolution paths (relative to project root):
 
 ```
-(www|src.www)/es/lib
-(www|src.www)/es/vendor
-(www|src.www)/lib
-(www|src.www)/vendor
+www.src/es/lib
+www.src/es/vendor
+www.src/lib
+www.src/vendor
 node_modules
 ```
 
@@ -160,113 +147,10 @@ The default configurations add the following aliases, which may be useful in res
 
 Alias            | Path
 ----------------:|:--------------------------------------
-`$LIB`           | `(www|src.www)/lib`
-`Lib`            | `(www|src.www)/lib`
-`$VENDOR`        | `(www|src.www)/vendor`
-`Vendor`         | `(www|src.www)/vendor`
-`Components`     | `(www|src.www)/es/components`
-`Controllers`    | `(www|src.www)/es/controllers`
-`Models`         | `(www|src.www)/es/models`
-`Pages`          | `(www|src.www)/es/pages`
-`Routes`         | `(www|src.www)/es/routes`
-`Templates`      | `(www|src.www)/es/templates`
-`Utilities`      | `(www|src.www)/es/utilities`
-`Views`          | `(www|src.www)/es/views`
-
-# Overriding the configuration
-
-Preferably you should make changes to `webpack.config.js` instead of changing `webpack.common.js`. The main reason is that doing so allows you to remove `webpack.common.js` should a new version of the plugin require a fresh version. Plus, unless you're completely changing how the bundling works, you'll end up with a more maintainable configuration.
-
-## webpack.common.js exports
-
-The following are exported by `webpack.common.js`:
-
-* `config(options)`: returns a webpack configuration based on `options`, as follows:
-    * `src` (optional): Source directory; defaults to `$PROJECT_ROOT/www.src` if present, or `$PROJECT_ROOT/www` otherwise.
-    * `dirs` (required): directory mappings. A default mapping is exported as `defaults.dirs` and looks like follows:
-        ```js
-        {
-            css:      "css",
-            es:       "es",
-            external: "www.src",
-            html:     "html",
-            img:      "img",
-            js:       "js",
-            lib:      "lib",
-            scss:     "scss",
-            ts:       "ts",
-            vendor:   "vendor",
-            www:      "www",
-            aliases: {
-                Components:  "components",
-                Controllers: "controllers",
-                Models:      "models",
-                Pages:       "pages",
-                Routes:      "routes",
-                Templates:   "templates",
-                Utilities:   "util",
-                Views:       "views",
-            }
-        }
-        ```
-
-        * The `alias` key is used to add additional module resolution aliases. In addition, `$LIB`, `Lib`, `$VENDOR` and `Vendor` point to `dirs.lib` and `dirs.vendor`.
-    * `sourcePaths` (optional): Provides the names of the source paths that can be transformed. Any missing paths are copied from the default, as follows:
-        ```js
-        {
-            src: options.src,
-            es: dirs.es,
-            ts: dirs.ts
-            scss: dirs.scss
-        }
-        ```
-    * `outputPaths` (optional): Provides the names of the output paths. Any missing paths are copied from the default, as follows:
-        ```js
-        {
-            www: dirs.www,
-            js: dirs.js,
-            css: dirs.css
-        }
-        ```
-    * `indexes` (optional): Provides source/destination mapping for varies entry and index files. Extended from the following form (`from` is relative to `sourcePaths.src`, and `to` is relative to `outputPaths.www`):
-        ```js
-        {
-            scss: {from:, to:},
-            es: {from:, to:},
-            ts: {from:, to:},
-            vendor: {to:}
-        }
-        ```
-    * `outputFile` (optional): Specifies the output filename for the JavaScript bundle. Defaults to `indexes.es.to + "bundle.js"`
-    * `vendor` (required): Modules to output as part of the `vendor` chunk. If none, pass `[]`.
-    * `entryFiles` (optional): Specifies the entry files for the app. If not provided, defaults to:
-        ```js
-        {
-            app: ["./" + indexes.es.from, "./" + indexes.scss.from],
-            vendor: vendor  // if vendor has length > 0
-        }
-        ```
-    * `allowTypeScript` (optional): Indicates if typescript is permitted. This enables extra extensions and configuration for the TypeScript compiler. Defaults to `false`.
-    * `allowScss` (optional): Indicates if Scss is permitted. Defaults to `false`.
-    * `transpiler` (optional): Indicates the webpack loader to use for JavaScript files. If `allowTypeScript` is `true`, defaults to `ts-loader`.
-    * `assetsToCopyIfExternal` (required): Indicates the assets to copy from `dirs.external` to `dirs.www`. A default list is exported under `defaults.assetsToCopyIfExternal`, and looks like follows:
-        ```js
-        [
-            { from: "*.html" },
-            { from: dirs.img + "/**/*" },
-            { from: dirs.css + "/**/*" },
-            { from: dirs.js + "/**/*" },
-            { from: dirs.vendor + "/**/*" },
-            { from: dirs.lib + "/**/*" },
-            { from: dirs.html + "/**/*" },
-        ]
-        ```
-    * `assetsToCopyIfSibling` (required): Same as `assetsToCopyIfExternal`, but applies if the source directory is the `dirs.www` folder instead of `dirs.external`. The exported default (`defaults.assetsToCopyIfSibling`) is `[]`.
-* `defaults`: useful defaults, as follows
-    * `dirs`: exports default directory mappings
-    * `vendor`: exports default vendor modules
-    * `assetsToCopyIfExternal`, `assetsToCopyIfSibling`: exports default assets to copy
-    * `transpiler`: exports default transpiler
+`$LIB`           | `www.src/lib`
+`Lib`            | `www.src/lib`
+`$VENDOR`        | `www.src/vendor`
+`Vendor`         | `www.src/vendor`
 
 # License
 

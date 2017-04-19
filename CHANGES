@@ -1,0 +1,14 @@
+# 0.3.1
+
+ - fix incorrect urls in CSS bundle
+
+# 0.3.0
+
+ - completely eliminates the similarity to `cordova-plugin-webpack-transpiler`; the template doesn't need to be nearly as flexible as the plugin, and so this reduces a lot of moving parts. Everything is still configurable, but no `webpack.common.js` is needed anymore, and the `afterPrepare` script has been removed.
+ - When `--release` is used, `NODE_ENV` is set to `"production"` (when using internal release config)
+ - support jpeg extensions
+ - File loader outputs to full target path correctly now
+ - target index.html is generated with source index.html
+ - bundles are automatically injected into index.html
+ - css stylesheets are passed through the scss parser if scss is enabled
+ - css stylesheets in node_modules are bundled into vendor.css (vendor.css specifies output name)

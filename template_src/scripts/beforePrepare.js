@@ -1,15 +1,22 @@
 #!/usr/bin/env node
 
-var common = require("./common.js");
-
 /**
- *
  * Returns a prettified stringified representation of item
  * @param {any} item    the item to pretty print
  * @returns {string}    the pretty printed transformation
  */
 function prettyPrint(item) {
     return JSON.stringify(item, null, 2);
+}
+
+/**
+ * runs npm install in the project
+ * @param {any} ctx Cordova context
+ * @returns {void}
+ */
+function installRequiredDependencies(ctx) {
+    var shell = ctx.requireCordovaModule("shelljs");
+    return (shell.exec("npm install").code === 0);
 }
 
 module.exports = function(ctx) {
@@ -23,7 +30,7 @@ module.exports = function(ctx) {
     }
 
     events.emit("info", "Running npm install...");
-    common.installRequiredDependencies(ctx);
+    installRequiredDependencies(ctx);
 
     // why? Because if we are linked to the plugin, node doesn't know how to find our
     // modules! So we have to have the project root directory and then resolve where
@@ -53,7 +60,14 @@ module.exports = function(ctx) {
             events.emit("verbose", "... ... with internal release webpack config");
             webpackConfig = Object.assign({}, debugWebpackConfig, {
                 devtool: "none",
-            });
+            })
+            webpackConfig.plugins.push(
+                new webpack.DefinePlugin({
+                    "process.env": {
+                        NODE_ENV: '"production"'
+                    }
+                })
+            );
             webpackConfig.plugins.push(
                 new webpack.optimize.UglifyJsPlugin({
                     compress: {
@@ -83,7 +97,7 @@ module.exports = function(ctx) {
                 deferral.reject(stats);
             }
         }
-        events.emit("info", "... webpack bundling and babel transpilation phase complete!");
+        events.emit("info", "... webpack bundling and typescript transpilation phase complete!");
         events.emit(stats.hasWarnings() ? "warn" : "info", prettyStats);
         deferral.resolve();
     });
